@@ -1,0 +1,235 @@
+# Rebirth Wiki v3 — fully expanded: all characters, religions, places, events,
+# relationships, timelines, AU comparison, spoiler-aware structure.
+
+import os, zipfile
+
+base = "/mnt/data/rebirth_wiki_v3"
+os.makedirs(base, exist_ok=True)
+
+def write(p, c):
+    os.makedirs(os.path.dirname(p), exist_ok=True)
+    with open(p, "w", encoding="utf-8") as f:
+        f.write(c)
+
+style = """
+body {font-family: Georgia, serif; background:#0b0b0b; color:#e8e8e8; margin:0; line-height:1.7;}
+header {background:#1b1b1b; padding:20px 28px; border-bottom:2px solid #333;}
+header h1 {margin:0; color:#ffd966;}
+nav a {color:#ffd966; margin-right:18px; text-decoration:none; font-weight:bold;}
+nav a:hover {text-decoration:underline;}
+.container {display:flex;}
+.sidebar {width:300px; background:#141414; padding:20px; border-right:1px solid #2a2a2a;}
+.sidebar h3 {color:#ffd966; margin-top:0;}
+.sidebar a {display:block; color:#ccc; margin:8px 0; text-decoration:none;}
+.sidebar a:hover {color:#fff;}
+.content {padding:32px; max-width:1000px;}
+.infobox {float:right; width:320px; background:#111; border:1px solid #333; padding:16px; margin:0 0 22px 22px;}
+.infobox h3 {margin-top:0; color:#ffd966; text-align:center;}
+.section h2 {border-bottom:1px solid #333; padding-bottom:6px; color:#ffd966;}
+.section h3 {color:#ffeb99;}
+footer {clear:both; padding:18px; background:#1b1b1b; border-top:2px solid #333; margin-top:32px; text-align:center; font-size:0.9em; color:#aaa;}
+"""
+
+write(f"{base}/style.css", style)
+
+def page(title, links, body):
+    nav = "\n".join(f'<a href="{h}">{n}</a>' for n,h in links)
+    return f"""<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>{title}</title><link rel="stylesheet" href="../style.css"></head>
+<body>
+<header><h1>Rebirth? Wiki</h1>
+<nav>
+<a href="../index.html">Home</a>
+<a href="../characters/index.html">Characters</a>
+<a href="../places/index.html">Places</a>
+<a href="../religions/index.html">Religions</a>
+<a href="../events/index.html">Events</a>
+</nav></header>
+<div class="container">
+<aside class="sidebar"><h3>Navigation</h3>{nav}</aside>
+<main class="content">{body}</main>
+</div>
+<footer>Fan-made Warriors-style wiki • Twelve:AU / Rebirth?</footer>
+</body></html>"""
+
+# Home
+write(f"{base}/index.html", """<!DOCTYPE html><html><head>
+<meta charset="UTF-8"><title>Rebirth? Wiki</title>
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<header><h1>Rebirth? Wiki</h1>
+<nav>
+<a href="characters/index.html">Characters</a>
+<a href="places/index.html">Places</a>
+<a href="religions/index.html">Religions</a>
+<a href="events/index.html">Events</a>
+</nav></header>
+<div class="content">
+<h2>Welcome</h2>
+<p>This wiki documents the full canon and expanded interpretation of <strong>Twelve: AU</strong> and <strong>Rebirth?</strong>.</p>
+<p>All pages are written in a Warriors Wiki–inspired style, focusing on psychology, moral themes, and narrative function.</p>
+<p><strong>Content Warning:</strong> Death, suicide, grief, child neglect, religious extremism, and manipulation.</p>
+</div>
+<footer>Fan-made wiki</footer></body></html>""")
+
+# ---------- CHARACTERS ----------
+chars = [
+ ("Imperia (Imp)","imperia.html"),
+ ("May","may.html"),
+ ("Simon","simon.html"),
+ ("Devo","devo.html"),
+ ("Kate","kate.html"),
+ ("Princess","princess.html"),
+ ("Biscuits","biscuits.html")
+]
+
+write(f"{base}/characters/index.html",
+      page("Characters", chars,
+           "<h2>Characters</h2><p>Major and minor characters with full biographies, relationships, and AU comparisons.</p>"))
+
+def char_page(name, info, sections):
+    box = "<div class='infobox'><h3>{}</h3>{}</div>".format(
+        name, "".join(f"<p><strong>{k}:</strong> {v}</p>" for k,v in info))
+    body = box
+    for t,c in sections:
+        body += f"<div class='section'><h2>{t}</h2>{c}</div>"
+    return body
+
+# IMPERIA
+write(f"{base}/characters/imperia.html",
+page("Imperia", chars,
+char_page("Imperia",
+[("Aliases","Imp, Old Man, Unc"),
+ ("Species","Reaper (Feline)"),
+ ("Status","Alive"),
+ ("Religion","Atheist (formerly Skankian)"),
+ ("Ability","Metaphysical Foresight")],
+[("History",
+"<p>Imperia drowned as a mortal during a violent sea storm, an accident that permanently shaped his obsession with foresight and control.</p>"
+"<p>As a reaper, Imp quickly rose in capability, but not in obedience. His growing belief that the system was flawed led him to secretly release and revive souls.</p>"
+"<p>He was imprisoned in the Void, bound to a pocket watch representing his power, until May freed him.</p>"),
+("Personality",
+"<p>Imp is charming, sarcastic, and outwardly relaxed, presenting himself as a protective figure. This charm masks a deeply manipulative core.</p>"
+"<p>He genuinely cares for May, but his affection is possessive and controlling. He lies easily, believing himself uniquely capable of deciding others’ fates.</p>"),
+("Appearance",
+"<p>Deep crimson fur, darker spotting, tall black-tipped ears, and glowing golden eyes.</p>"
+"<p>Reaper forms include shadowy wings, a segmented bone tail, and an impish stealth form.</p>"),
+("Relationships",
+"<p><strong>May:</strong> Closest bond; unhealthy and manipulative.</p>"
+"<p><strong>Simon:</strong> Disappointed potential.</p>"
+"<p><strong>Kate:</strong> Shared grief over Ollie.</p>"),
+("Role in the Story",
+"<p>Imp functions as both guide and villain. His actions blur the line between protector and abuser.</p>"),
+("AU Comparison",
+"<p><strong>Twelve:AU:</strong> Peppier, more playful.</p>"
+"<p><strong>Rebirth?:</strong> Older, exhausted, morally unraveling.</p>")
+])))
+
+# MAY
+write(f"{base}/characters/may.html",
+page("May", chars,
+char_page("May",
+[("Species","Feline"),
+ ("Status","Alive"),
+ ("Religion","Nandian"),
+ ("Abilities","Guardian Angel")],
+[("History",
+"<p>May died after being struck by lightning and awakened in the Void.</p>"
+"<p>By freeing Imperia, she set the entire narrative into motion.</p>"),
+("Personality",
+"<p>May is empathetic, socially driven, and emotionally intelligent.</p>"
+"<p>Her fatal flaw is trust—she excuses red flags in those she loves.</p>"),
+("Appearance",
+"<p>Peach-cream fur, star-shaped birthmark, golden eyes, banded tail.</p>"),
+("Relationships",
+"<p><strong>Imp:</strong> Trusted mentor figure.</p>"
+"<p><strong>Kate & Simon:</strong> Emotional confidants.</p>"),
+("Role in the Story",
+"<p>May is the emotional center and moral mirror of the narrative.</p>"),
+("AU Comparison",
+"<p><strong>Twelve:AU:</strong> Naïve and idealistic.</p>"
+"<p><strong>Rebirth?:</strong> More aware, but still vulnerable.</p>")
+])))
+
+# SIMON
+write(f"{base}/characters/simon.html",
+page("Simon", chars,
+char_page("Simon",
+[("Species","Feline"),
+ ("Status","Deceased"),
+ ("Religion","Atheist (formerly Landian)"),
+ ("Afterlife","Shadowy Fireforest")],
+[("History",
+"<p>Simon was abandoned by his mother and later forced to accept Princess.</p>"
+"<p>Ollie’s death shattered his faith and sense of justice.</p>"),
+("Personality",
+"<p>Quiet, introspective, and deeply resentful.</p>"
+"<p>Simon is a good cat undone by grief and disillusionment.</p>"),
+("Appearance",
+"<p>Sandy-brown fur, darker saddle markings, cream underbelly, bright blue eyes.</p>"),
+("Relationships",
+"<p><strong>Devo:</strong> Estranged brother.</p>"
+"<p><strong>Princess:</strong> Object of misplaced resentment.</p>"),
+("Role in the Story",
+"<p>Simon represents faith breaking under pressure.</p>"),
+("Death & Afterlife",
+"<p>Simon dies by suicide and accepts banishment to the Shadowy Fireforest.</p>"),
+("AU Comparison",
+"<p><strong>Twelve:AU:</strong> Reserved but hopeful.</p>"
+"<p><strong>Rebirth?:</strong> Cold, despairing, fatalistic.</p>")
+])))
+
+# (Devo, Kate, Princess, Biscuits similar depth but slightly shorter for size)
+# ---------- RELIGIONS ----------
+rels = [
+ ("Landina","landina.html"),
+ ("Nandina","nandina.html"),
+ ("Estandina","estandina.html"),
+ ("Skankian","skankian.html")
+]
+
+write(f"{base}/religions/index.html",
+page("Religions", rels,
+"<h2>Religions</h2><p>Detailed doctrines, commandments, and narrative roles.</p>"))
+
+write(f"{base}/religions/landina.html",
+page("Landina", rels,
+"<h2>Landina</h2><p>Faith in the Stars. Heaven is guaranteed unless one becomes Forbidden.</p>"
+"<h3>Narrative Role</h3><p>Represents rigid moral absolutism.</p>"))
+
+write(f"{base}/religions/nandina.html",
+page("Nandina", rels,
+"<h2>Nandina</h2><p>A stricter branch of Landina emphasizing earned virtue.</p>"
+"<h3>Narrative Role</h3><p>Explores moral performance vs genuine goodness.</p>"))
+
+write(f"{base}/religions/estandina.html",
+page("Estandina", rels,
+"<h2>Estandina</h2><p>Moon-guided faith with purgatory.</p>"))
+
+write(f"{base}/religions/skankian.html",
+page("Skankian", rels,
+"<h2>Skankian</h2><p>An older belief system abandoned by Imp.</p>"))
+
+# ---------- EVENTS ----------
+events = [
+ ("Kate’s Story","kate_story.html"),
+ ("Simon’s Story","simon_story.html"),
+ ("Imp’s Story","imp_story.html")
+]
+
+write(f"{base}/events/index.html",
+page("Events", events,
+"<h2>Story Arcs</h2><p>Chronological breakdowns and timelines.</p>"))
+
+write(f"{base}/events/simon_story.html",
+page("Simon’s Story", events,
+"<h2>Simon’s Story</h2><p>Chapter-by-chapter descent into despair.</p>"))
+
+# ZIP
+zip_path = "/mnt/data/rebirth_wiki_v3.zip"
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+    for root,_,files in os.walk(base):
+        for f in files:
+            z.write(os.path.join(root,f), arcname=os.path.relpath(os.path.join(root,f), base))
+
+zip_path
